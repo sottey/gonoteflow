@@ -439,8 +439,8 @@ func (nm *NoteManager) inlineAllResources(htmlContent, baseURL string) string {
 	// Inline images as base64 data URIs
 	htmlContent = nm.inlineImages(htmlContent, baseURLParsed)
 
-	// Inline web fonts
-	htmlContent = nm.inlineWebFonts(htmlContent, baseURLParsed)
+	// Inline web fonts SCO: This is not doing anything at this time
+	// htmlContent = nm.inlineWebFonts(htmlContent, baseURLParsed)
 
 	// Process inline CSS styles that may contain background images
 	htmlContent = nm.inlineStyleAttributes(htmlContent, baseURLParsed)
