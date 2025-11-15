@@ -131,6 +131,7 @@ func (a *App) setupRoutes() {
 
 	// Note routes
 	api.Get("/notes", notesHandler.GetNotes)
+	api.Get("/json", notesHandler.GetNotesJSON)
 	api.Post("/notes", notesHandler.AddNote)
 	api.Get("/notes/:index", notesHandler.GetNote)
 	api.Put("/notes/:index", notesHandler.UpdateNote)
@@ -178,7 +179,7 @@ func (a *App) serveIndex(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to render page: "+err.Error())
 	}
-	
+
 	c.Set("Content-Type", "text/html")
 	return c.SendString(html)
 }
@@ -189,7 +190,7 @@ func (a *App) serveGlobalTasks(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to render global tasks page: "+err.Error())
 	}
-	
+
 	c.Set("Content-Type", "text/html")
 	return c.SendString(html)
 }
@@ -199,10 +200,10 @@ func (a *App) Start() error {
 	for port := 8000; port < 65535; port++ {
 		addr := fmt.Sprintf(":%d", port)
 		a.port = port // Update the port for this instance
-		
+
 		log.Printf("NoteFlow server starting on http://localhost:%d", port)
 		log.Printf("Using folder: %s", a.basePath)
-		
+
 		err := a.fiber.Listen(addr)
 		if err != nil {
 			// If error contains "address already in use", try next port
@@ -212,14 +213,13 @@ func (a *App) Start() error {
 			// For other errors, return them
 			return err
 		}
-		
+
 		// If we get here, server started successfully (this won't actually be reached because Listen is blocking)
 		return nil
 	}
-	
+
 	return fmt.Errorf("no available port found in range 8000-65534")
 }
-
 
 // GetPort returns the port the server is running on
 func (a *App) GetPort() int {
@@ -234,5 +234,3 @@ func getConfigPath() string {
 	}
 	return filepath.Join(homeDir, ".config", "noteflow", "noteflow.json")
 }
-
-

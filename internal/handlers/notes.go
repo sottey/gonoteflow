@@ -24,17 +24,28 @@ func NewNotesHandler(noteManager *services.NoteManager) *NotesHandler {
 func (h *NotesHandler) GetNotes(c *fiber.Ctx) error {
 	html, err := h.noteManager.RenderNotesHTML()
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to render notes: "+err.Error())
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to render notes as html: "+err.Error())
 	}
 
 	c.Set("Content-Type", "text/html")
 	return c.SendString(html)
 }
 
+// GetNotes returns all notes as JSON
+func (h *NotesHandler) GetNotesJSON(c *fiber.Ctx) error {
+	json, err := h.noteManager.RenderNotesJSON()
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to render notes as json: "+err.Error())
+	}
+
+	c.Set("Content-Type", "application/json")
+	return c.SendString(json)
+}
+
 // AddNote creates a new note
 func (h *NotesHandler) AddNote(c *fiber.Ctx) error {
 	var title, content string
-	
+
 	// Check content type to handle both JSON and FormData
 	contentType := c.Get("Content-Type")
 	if contentType == "application/json" {
@@ -95,7 +106,7 @@ func (h *NotesHandler) UpdateNote(c *fiber.Ctx) error {
 	}
 
 	var title, content string
-	
+
 	// Check content type to handle both JSON and FormData
 	contentType := c.Get("Content-Type")
 	if contentType == "application/json" {
